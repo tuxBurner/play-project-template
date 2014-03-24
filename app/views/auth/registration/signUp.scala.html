@@ -1,0 +1,63 @@
+@(signUpForm: Form[securesocial.controllers.Registration.RegistrationInfo], token: String)(implicit request: RequestHeader)
+@import securesocial.core.providers.UsernamePasswordProvider
+@import securesocial.core.IdentityProvider
+@import views.html.twbs._
+
+
+@main(Messages("securesocial.signup.title")) {
+
+  <div class="jumbotron indexJumpotron">
+    <h1>@Messages("securesocial.signup.title")</h1>
+    <div class="container">
+      <form action="@securesocial.core.providers.utils.RoutesHelper.handleSignUp(token).absoluteURL(IdentityProvider.sslEnabled)" class="form" autocomplete= "off" method="POST">
+
+
+
+        <div class="row">
+        @if(UsernamePasswordProvider.withUserNameSupport) {
+          @formhelper.inputText(
+            signUpForm("userName"),
+            'placeholder -> Messages("securesocial.signup.username"),
+            '_hideLabel -> true
+          )
+        }
+
+        @formhelper.inputText(
+          signUpForm("firstName"),
+          'placeholder -> Messages("securesocial.signup.firstName"),
+          '_hideLabel -> true
+
+        )
+
+        @formhelper.inputText(
+          signUpForm("lastName"),
+          'placeholder -> Messages("securesocial.signup.lastName"),
+          '_hideLabel -> true
+
+        )
+        </div>
+
+        <div class="row">
+        @formhelper.inputPassword(
+          signUpForm("password.password1"),
+          'placeholder -> Messages("securesocial.signup.password1"),
+          '_hideLabel -> true
+        )
+
+
+        @formhelper.inputPassword(
+          signUpForm("password.password2"),
+          'placeholder -> Messages("securesocial.signup.password2"),
+          '_hideLabel -> true
+        )
+        </div>
+
+        <button type="submit" class="btn btn-default">@Messages("securesocial.signup.createAccount")</button>
+        <a class="btn btn-primary" href="@securesocial.core.providers.utils.RoutesHelper.login()">@Messages("securesocial.signup.cancel")</a>
+
+
+      </form>
+
+    </div>
+  </div>
+}

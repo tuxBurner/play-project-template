@@ -1,0 +1,59 @@
+@(loginForm: Option[play.api.data.Form[(String, String)]])(implicit request: play.api.mvc.Request[play.api.mvc.AnyContent])
+@import securesocial.core.IdentityProvider
+@import securesocial.core.providers.UsernamePasswordProvider
+@import securesocial.core.Registry
+
+@main(Messages("headline")) {
+
+    <div class="jumbotron indexJumpotron @if(BaseController.getNeoUserFromRequest.isEmpty == false) {hidden-xs}">
+        <div class="container">
+            <h1>@Messages("headline")</h1>
+            <p>@Messages("index.jumpotron.text")</p>
+
+            @if(BaseController.getNeoUserFromRequest.isEmpty == true) {
+                <h2>Login with an external account</h2>
+                <div>
+                @defining(Registry.providers.all.values.filter(_.id != UsernamePasswordProvider.UsernamePassword)) { externalProviders =>
+                    @if(externalProviders.size > 0) {
+                        @for(p <- externalProviders) {
+                            @views.html.auth.provider(p.id)
+                        }
+                    }
+                }
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5"><hr class="pull-right" style="width : 75px;" /></div>
+                    <div class="col-md-2  ">or</div>
+                    <div class="col-md-5"><hr class="pull-left" style="width : 75px;" /></div>
+                </div>
+
+                <div class="row">
+                    <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)(request)" class="form-inline" autocomplete="off" method="POST">
+                        @if(UsernamePasswordProvider.withUserNameSupport) {
+                            <div class="form-group">
+                                <input type="text" placeholder="@Messages("securesocial.signup.username1")" class="form-control">
+                            </div>
+                        } else {
+                            <div class="form-group">
+                                <input type="text" placeholder="@Messages("securesocial.signup.email1")" class="form-control">
+                            </div>
+                        }
+                        <div class="form-group">
+                            <input type="password" placeholder="@Messages("securesocial.signup.password1")" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">@Messages("securesocial.login.title")</button>
+                    </form>
+                </div>
+            } else {
+                @defining(BaseController.getNeoUserFromRequest.get) { user =>
+                    <h2>Welcome back</h2>
+                    <h3>@views.html.auth.displayUserAvatar(user, helpers.ImageSize.USER_AVATAR_BIG) @user.fullName()</h3>
+                }
+            }
+        </div>
+    </div>
+
+
+}

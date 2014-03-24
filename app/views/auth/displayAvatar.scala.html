@@ -1,0 +1,6 @@
+@(avatarUrl: String, size: helpers.ImageSize = helpers.ImageSize.USER_AVATAR_SMALL)
+@if(avatarUrl != null && avatarUrl.isEmpty == false) {
+    <img src="@avatarUrl" class="img-circle" width="@size.width" height="@size.height" />
+} else {
+    <i class="fa fa-user"></i>
+}
