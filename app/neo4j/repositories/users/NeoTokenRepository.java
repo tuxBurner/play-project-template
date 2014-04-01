@@ -8,12 +8,25 @@ import org.springframework.data.neo4j.repository.GraphRepository;
 
 import java.util.List;
 
+/**
+ * Repository for managing the login tokens
+ */
 public interface NeoTokenRepository extends GraphRepository<NeoToken> {
 
-    public static String TYPE_LABEL = "`__TYPE__"+TypeAliasNames.TOKEN+"`";
+  /**
+   * Find a token by its uuid
+   *
+   * @param uuid
+   * @return
+   */
+  public NeoToken findByUuid(final String uuid);
 
-    public NeoToken findByUuid(final String uuid);
-
-    @Query("MATCH (tokens:"+TYPE_LABEL+") WHERE tokens.expirationTime < {0} RETURN tokens")
-    public List<NeoToken> findAllExpiredTokens(long now);
+  /**
+   * Find all expired tokens
+   *
+   * @param now
+   * @return
+   */
+  @Query("MATCH (tokens:" + TypeAliasNames.TOKEN + ") WHERE tokens.expirationTime < {0} RETURN tokens")
+  public List<NeoToken> findAllExpiredTokens(long now);
 }
