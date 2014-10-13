@@ -1,8 +1,8 @@
 package neo4j.models.users;
 
+import neo4j.Neo4JServiceProvider;
 import neo4j.TypeAliasNames;
 import neo4j.models.AbstractNeoNode;
-import neo4j.Neo4JServiceProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.TypeAlias;
@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import play.Logger;
 import scala.Option;
 import securesocial.core.java.Token;
+import securesocial.core.providers.MailToken;
 
 import java.util.List;
 
@@ -33,8 +34,8 @@ public class NeoToken extends AbstractNeoNode {
      * Transforms the token to a scala token
      * @return
      */
-    private securesocial.core.providers.Token toScalaToken() {
-        return securesocial.core.providers.Token$.MODULE$.apply(
+    public MailToken toScalaToken() {
+        return securesocial.core.providers.MailToken$.MODULE$.apply(
                 uuid, email, new DateTime(created), new DateTime(expirationTime), isSignUp
         );
     }
@@ -45,7 +46,7 @@ public class NeoToken extends AbstractNeoNode {
      * @param scalaToken
      * @return
      */
-    public static NeoToken create(securesocial.core.providers.Token scalaToken) {
+    public static NeoToken create(MailToken scalaToken) {
         final Token token = Token.fromScala(scalaToken);
         final NeoToken tokenAction = new NeoToken();
         tokenAction.uuid = token.uuid;
@@ -70,11 +71,12 @@ public class NeoToken extends AbstractNeoNode {
      * Deletes the token by the given uuid
      * @param uuid
      */
-    public static void deleteTokenByUuid(final String uuid) {
+    public static NeoToken deleteTokenByUuid(final String uuid) {
         final NeoToken token = findTokenByUuid(uuid);
         if(token != null) {
             Neo4JServiceProvider.get().neoTokenRepository.delete(token);
         }
+        return token;
     }
 
     /**
@@ -83,7 +85,7 @@ public class NeoToken extends AbstractNeoNode {
      * @param uuid
      * @return
      */
-    public static Option<securesocial.core.providers.Token> findToken(final String uuid) {
+    public static Option<MailToken> findToken(final String uuid) {
         final NeoToken token = findTokenByUuid(uuid);
         if (token == null) {
             return null;

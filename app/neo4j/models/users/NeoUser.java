@@ -13,7 +13,7 @@ import securesocial.core.*;
 
 @NodeEntity
 @TypeAlias(value = TypeAliasNames.USER)
-public class NeoUser extends AbstractNeoNode implements Identity {
+public class NeoUser extends AbstractNeoNode implements GenericProfile {
 
   @Indexed(unique = true)
   public String email;
@@ -46,39 +46,39 @@ public class NeoUser extends AbstractNeoNode implements Identity {
   /**
    * Saves the given user
    *
-   * @param identity
+   * @param basicProfile
    * @return
    */
-  public static NeoUser save(Identity identity) {
+  public static NeoUser save(BasicProfile basicProfile) {
 
 
-    NeoUser user = findNeoUserByIdentityId(identity.identityId());
+    NeoUser user = findNeoUserByIdentityId(basicProfile);
     if (user == null) {
       Logger.debug("User is a new user.");
       user = new NeoUser();
     }
 
-    user.authMethod = identity.authMethod().method();
+    user.authMethod = basicProfile.authMethod().method();
 
-    user.firstName = identity.firstName();
-    user.lastName = identity.lastName();
-    user.fullName = identity.fullName();
-    user.identProviderId = identity.identityId().providerId();
-    user.identUserId = identity.identityId().userId();
+    user.firstName = basicProfile.firstName().get();
+    user.lastName = basicProfile.lastName().get();
+    user.fullName = basicProfile.fullName().get();
+    user.identProviderId = basicProfile.providerId();
+    user.identUserId = basicProfile.userId();
 
-    if (identity.email().isDefined() == true) {
-      user.email = identity.email().get();
+    if (basicProfile.email().isDefined() == true) {
+      user.email = basicProfile.email().get();
     }
 
-    if (identity.avatarUrl().isDefined() == true) {
-      user.avatarUrl = identity.avatarUrl().get();
+    if (basicProfile.avatarUrl().isDefined() == true) {
+      user.avatarUrl = basicProfile.avatarUrl().get();
     }
 
     /**
      * Password login user
      */
-    if (identity.passwordInfo().isDefined() && user.id == null) {
-      final PasswordInfo passwordInfo = identity.passwordInfo().get();
+    if (basicProfile.passwordInfo().isDefined() && user.id == null) {
+      final PasswordInfo passwordInfo = basicProfile.passwordInfo().get();
       user.password = passwordInfo.password();
       user.passwordHasher = passwordInfo.hasher();
       if (passwordInfo.salt().isDefined() == true) {
@@ -103,51 +103,52 @@ public class NeoUser extends AbstractNeoNode implements Identity {
    * @param providerId
    * @return
    */
-  public static Option<Identity> findByEmailAndProvider(final String email, final String providerId) {
-    final Identity byEmailAndProvider = Neo4JServiceProvider.get().neoUserRepository.findByEmailAndProvider(email, providerId);
+  public static Option<UserProfile> findByEmailAndProvider(final String email, final String providerId) {
+    final UserProfile byEmailAndProvider = Neo4JServiceProvider.get().neoUserRepository.findByEmailAndProvider(email, providerId);
     return Option.apply(byEmailAndProvider);
   }
 
   /**
    * Finds the user by the given id
    *
-   * @param id
+   * @param userProfile
    * @return
    */
-  public static Option<Identity> findByIdentityId(IdentityId id) {
-    final Identity byIdentity = findNeoUserByIdentityId(id);
+  public static Option<UserProfile> findByIdentityId(UserProfile userProfile) {
+    final UserProfile byIdentity = findNeoUserByIdentityId(userProfile);
     return Option.apply(byIdentity);
   }
 
   /**
    * Finds the user by the identity
    *
-   * @param id
+   * @param userProfile
    * @return
    */
-  public static NeoUser findNeoUserByIdentityId(IdentityId id) {
-    return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(id.userId(), id.providerId());
+  public static NeoUser findNeoUserByIdentityId(UserProfile userProfile) {
+    return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userProfile.userId(), userProfile.providerId());
   }
 
-  /* SECURE SOCIAL STUFF */
-  @Override
-  public IdentityId identityId() {
-    return new IdentityId(identUserId, identProviderId);
-  }
+    public static  NeoUser findUserByIdAndProviderId(final String userId, final String providerId) {
+        return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userId, providerId);
+    }
+
+
+
 
   @Override
-  public String firstName() {
-    return firstName;
-  }
-
-  @Override
-  public String lastName() {
-    return lastName;
+  public Option<String> firstName() {
+    return Option.apply(firstName);
   }
 
   @Override
-  public String fullName() {
-    return fullName;
+  public Option<String> lastName() {
+    return Option.apply(lastName);
+  }
+
+  @Override
+  public Option<String> fullName() {
+    return Option.apply(fullName);
   }
 
   @Override
@@ -184,5 +185,15 @@ public class NeoUser extends AbstractNeoNode implements Identity {
 
     return Option.empty();
   }
+
+    @Override
+    public String providerId() {
+        return null;
+    }
+
+    @Override
+    public String userId() {
+        return null;
+    }
     /* EO SECURE SOCIAL STUFF */
 }

@@ -1,12 +1,16 @@
 package services.auth
 
-import securesocial.core.{Authenticator, AuthenticatorStore}
-import play.api.{Mode, Application}
-import play.api.cache.Cache
-import play.api.Play.current
-import scala.util.Marshal
-import java.io.{FileInputStream, FileOutputStream, File, PrintWriter}
+import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.Date
+
+import play.api.Mode
+import play.api.Play.current
+import play.api.cache.Cache
+import securesocial.core.authenticator.{Authenticator, AuthenticatorStore}
+import securesocial.core.services.CacheService
+
+import scala.reflect.ClassTag
+import scala.util.Marshal
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,8 +19,8 @@ import java.util.Date
  * Time: 8:49 PM
  * To change this template use File | Settings | File Templates.
  */
-class DevSessionAuthStore(app: Application) extends AuthenticatorStore(app) {
-  def save(authenticator: Authenticator): Either[Error, Unit] = {
+/*class DevSessionAuthStore[A <: Authenticator[_]](cacheService: CacheService,app: play.api.Application) extends AuthenticatorStore[A] {
+  def save(authenticator: A,timeoutInSeconds: Int): Either[Error, Unit] = {
 
     if (app.mode == Mode.Dev) {
       DevSessionAuthStore.saveToFile(authenticator);
@@ -26,12 +30,12 @@ class DevSessionAuthStore(app: Application) extends AuthenticatorStore(app) {
     Right(())
   }
 
-  def find(id: String): Either[Error, Option[Authenticator]] = {
+  def find(id: String)(implicit ct: ClassTag[A]): Either[Error, Option[Authenticator[_]]] = {
 
     if (app.mode == Mode.Dev) {
       DevSessionAuthStore.find(id);
     } else {
-      Right(Cache.getAs[Authenticator](id))
+      Right(Cache.getAs[A](id))
     }
   }
 
@@ -43,7 +47,10 @@ class DevSessionAuthStore(app: Application) extends AuthenticatorStore(app) {
     }
     Right(())
   }
-}
+
+
+
+} */
 
 /**
  * Helper for storing the current authenticator when the app is in dev mode
@@ -58,7 +65,7 @@ object DevSessionAuthStore {
     }
   }
 
-  def find(id: String): Either[Error, Option[Authenticator]] = {
+  def find(id: String): Right[Nothing, Option[Authenticator[_]]] = {
 
     if (id.isEmpty == true) {
       Right(None)
@@ -68,16 +75,17 @@ object DevSessionAuthStore {
       if (file.exists() == true) {
         val in = new FileInputStream(file)
         val bytes = Stream.continually(in.read).takeWhile(-1 !=).map(_.toByte).toArray
-        val mmm = Marshal.load[Authenticator](bytes)
+        val mmm = Marshal.load[Authenticator[_]](bytes)
         Right(Option.apply(mmm))
       } else {
         Left(new Error(file.getAbsoluteFile+" does not exist."))
+        Right(None)
       }
     }
   }
 
 
-  def saveToFile(authenticator: Authenticator) {
+  def saveToFile(authenticator: Authenticator[_]) {
     val file = getDevSessionsFilePath(authenticator.id);
 
     val fos = new FileOutputStream(file, false)

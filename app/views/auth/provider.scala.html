@@ -1,20 +1,17 @@
-@(providerId: String, loginForm: Option[Form[(String, String)]] = None)(implicit request: play.api.mvc.RequestHeader)
+@(providerId: String, loginForm: Option[Form[(String, String)]] = None)(implicit request: RequestHeader, lang: Lang, env: securesocial.core.RuntimeEnvironment[_])
 
-
-@import securesocial.core.Registry
-@import securesocial.core.IdentityProvider
 @import securesocial.core.providers.UsernamePasswordProvider
 @import securesocial.core.AuthenticationMethod._
-@import securesocial.core.providers.utils.RoutesHelper
-@import play.api.Logger
-@import views.html.twbs.formhelper._
 
-@Registry.providers.get(providerId).map { provider =>
+@import play.api.Logger
+
+
+    @env.providers.get(providerId).map { provider =>
     @if( provider.authMethod == OAuth1 || provider.authMethod == OAuth2 ) {
 
 
         @defining(if(provider.id == "google") { "google-plus" } else { provider.id }) { providerIcon =>
-          <a href="@provider.authenticationUrl" class="socialBig btn btn-info">
+          <a href="@env.routes.authenticationUrl(provider.id)" class="socialBig btn btn-info">
             <i class="fa icon-large fa-@providerIcon"></i>
           </a>
         }
@@ -22,16 +19,16 @@
     }
 
     @if( provider.authMethod == UserPassword) {
-        <form action = "@securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass").absoluteURL(IdentityProvider.sslEnabled)(request)" class="form-inline" autocomplete="off" method="POST">
+        <form action = "@env.routes.authenticationUrl("userpass")" class="form-inline" autocomplete="off" method="POST">
                 @if( UsernamePasswordProvider.withUserNameSupport ) {
-                    @twbs.formhelper.inputText(
+                    @twbs.formhelper.html.inputText(
                         loginForm.get("username"),
                         'placeholder -> Messages("securesocial.signup.username"),
                         '_hideLabel -> true,
                         '_hideInfo -> true
                     )
                 } else {
-                    @twbs.formhelper.inputText(
+                    @twbs.formhelper.html.inputText(
                         loginForm.get("username"),
                         'placeholder -> Messages("securesocial.signup.email1"),
                         '_hideLabel -> true,
@@ -39,7 +36,7 @@
                     )
                 }
 
-                @twbs.formhelper.inputPassword(
+                @twbs.formhelper.html.inputPassword(
                     loginForm.get("password"),
                     'placeholder -> Messages("securesocial.signup.password1"),
                     '_hideLabel -> true,
@@ -51,10 +48,10 @@
 
 
                 <div class="clearfix">
-                    <a href="@securesocial.core.providers.utils.RoutesHelper.startResetPassword()"><p>@Messages("securesocial.login.forgotPassword") </a></p>
+                    <a href="@env.routes.resetPasswordUrl"><p>@Messages("securesocial.login.forgotPassword") </a></p>
                 </div>
                 <div class="clearfix">
-                    <p>@Messages("securesocial.login.signUp") <a href="@securesocial.core.providers.utils.RoutesHelper.startSignUp()">@Messages("securesocial.login.here")</a></p>
+                    <p>@Messages("securesocial.login.signUp") <a href="@env.routes.signUpUrl">@Messages("securesocial.login.here")</a></p>
                 </div>
 
         </form>

@@ -1,10 +1,17 @@
 package controllers
 
+import java.util.concurrent.TimeUnit
+
 import play.api.mvc._
 import neo4j.models.users.NeoUser
-import securesocial.core.{SecureSocial, SecuredRequest}
+import securesocial.core.{GenericProfile, SecureSocial}
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits._
 
-trait BaseController extends Controller with securesocial.core.SecureSocial {
+import scala.concurrent.duration.Duration
+
+trait BaseController extends Controller with securesocial.core.SecureSocial[NeoUser] {
 
   /**
    * Gets the current user from the SecuredRequest
@@ -38,16 +45,15 @@ object BaseController {
    * @param request
    * @return
    */
-  def getNeoUserFromRequest(implicit request: RequestHeader): Option[NeoUser] = {
-    SecureSocial.currentUser match {
-      case Some(userIdent) => {
-        if (userIdent.isInstanceOf[NeoUser]) {
-          Option.apply(userIdent.asInstanceOf[NeoUser])
-        } else {
-          Option.empty
-        }
-      }
-      case None => Option.empty
-    }
+  def currentUser(implicit request: RequestHeader,env: securesocial.core.RuntimeEnvironment[neo4j.models.users.NeoUser]): Option[neo4j.models.users.NeoUser] = {
+    val mu = SecureSocial.currentUser[neo4j.models.users.NeoUser];
+    Await.result(mu,Duration(10,TimeUnit.SECONDS))
+
+    //SecureSocial.currentUser[NeoUser].onComplete(f => f.get);
   }
+  /*def currentUser(implicit request: RequestHeader, env:securesocial.core.RuntimeEnvironment[_]): Option[NeoUser] = {
+    SecureSocial.currentUser[NeoUser].map { maybeUser =>
+      maybeUser;
+    }
+  } */
 }

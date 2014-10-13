@@ -1,4 +1,4 @@
-@(title: String, jsScript: Html = Html(""), styles: Html = Html(""))(content: Html)(implicit request: RequestHeader, lang: Lang)
+@(title: String, jsScript: Html = Html(""), styles: Html = Html(""))(content: Html)(implicit request: RequestHeader, lang: Lang, env:securesocial.core.RuntimeEnvironment[neo4j.models.users.NeoUser])
 <!DOCTYPE html>
 <html lang="@lang.language">
   <!DOCTYPE html>
@@ -7,12 +7,12 @@
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>@title @Messages("headline.suffix")</title>
-      <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+      <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")" />
 
       @* Here the css please *@
-      <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
-      <link rel='stylesheet' media="screen" href='@routes.WebJarAssets.at(WebJarAssets.locate("font-awesome.min.css"))'>
-      <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+      <link rel="stylesheet" media="screen" href="@routes.Assets.at("lib/bootstrap/css/bootstrap.css")" />
+      <link rel="stylesheet" media="screen" href="@routes.Assets.at("lib/font-awesome/css/font-awesome.min.css")" />
+      <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")" />
 
       @styles
     </head>
@@ -36,8 +36,8 @@
               <li><a href="#contact">Contact</a></li>
 
 
-              @if(BaseController.getNeoUserFromRequest.isDefined == true) {
-                @defining(BaseController.getNeoUserFromRequest.get) { user =>
+              @if(BaseController.currentUser == true) {
+                @defining(BaseController.currentUser) { user =>
                   <li><a href="@securesocial.controllers.routes.LoginPage.logout"><i class="fa fa-power-off"></i> @Messages("logout")</a></li>
                 }
               } else {
@@ -53,12 +53,12 @@
         * Display flash scope stuff here
         *@
         @if(request.flash.get(BaseController.FLASH_ERROR_KEY).isDefined) {
-          @views.html.twbs.alerts.alertDanger() {
+          @twbs.alerts.html.alertDanger() {
             @request.flash.get(BaseController.FLASH_ERROR_KEY)
           }
         }
         @if(request.flash.get(BaseController.FLASH_SUCCESS_KEY).isDefined) {
-          @views.html.twbs.alerts.alertSuccess() {
+          @twbs.alerts.html.alertSuccess() {
             @request.flash.get(BaseController.FLASH_SUCCESS_KEY)
           }
         }
@@ -67,9 +67,9 @@
       </div>
 
       @* Here the javascripts please *@
-      <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
-      <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))'></script>
-      <script type='text/javascript' src='@routes.Assets.at("javascripts/main.js")'></script>
+      <script type="text/javascript" src="@routes.Assets.at("lib/jquery/jquery.min.js")"></script>
+      <script type="text/javascript" src="@routes.Assets.at("lib/bootstrap/js/bootstrap.min.js")"></script>
+      <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
 
       @* JS Routes *@
       <script src="@routes.ApplicationController.jsRoutes" type="text/javascript" defer="defer"></script>
