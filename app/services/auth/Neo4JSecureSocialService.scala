@@ -57,7 +57,7 @@ class Neo4JSecureSocialService extends UserService[NeoUser] {
   override def updatePasswordInfo(user: NeoUser, info: PasswordInfo): Future[Option[BasicProfile]] = ???
 
   def neoUserToBasicProfile(neoUser: NeoUser): BasicProfile = {
-    BasicProfile.apply(neoUser.providerId(), neoUser.userId(), neoUser.firstName(), neoUser.lastName(), neoUser.fullName(), neoUser.email(), neoUser.avatarUrl(), neoUser.authMethod(), Option.empty)
+    BasicProfile.apply(neoUser.providerId(), neoUser.userId(), neoUser.firstName(), neoUser.lastName(), neoUser.fullName(), neoUser.email(), neoUser.avatarUrl(), neoUser.authMethod(), Option.empty, Option.empty,neoUser.passwordInfo());
   }
 
 

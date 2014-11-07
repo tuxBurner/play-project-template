@@ -36,7 +36,7 @@
               <li><a href="#contact">Contact</a></li>
 
 
-              @if(BaseController.currentUser == true) {
+              @if(BaseController.currentUser.isDefined == true) {
                 @defining(BaseController.currentUser) { user =>
                   <li><a href="@securesocial.controllers.routes.LoginPage.logout"><i class="fa fa-power-off"></i> @Messages("logout")</a></li>
                 }

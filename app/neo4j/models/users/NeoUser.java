@@ -15,185 +15,183 @@ import securesocial.core.*;
 @TypeAlias(value = TypeAliasNames.USER)
 public class NeoUser extends AbstractNeoNode implements GenericProfile {
 
-  @Indexed(unique = true)
-  public String email;
+    @Indexed(unique = true)
+    public String email;
 
-  public String identUserId;
+    public String userId;
 
-  public String identProviderId;
+    public String providerId;
 
-  public String firstName;
+    public String firstName;
 
-  public String lastName;
+    public String lastName;
 
-  public String fullName;
+    public String fullName;
 
-  public String avatarUrl;
+    public String avatarUrl;
 
-  public String authMethod;
+    public String authMethod;
 
-  public boolean admin = false;
-
-
-  /**
-   * PASSWORD STUFF
-   */
-  public String password;
-  public String passwordHasher;
-  public String passwordSalt;
+    public boolean admin = false;
 
 
-  /**
-   * Saves the given user
-   *
-   * @param basicProfile
-   * @return
-   */
-  public static NeoUser save(BasicProfile basicProfile) {
+    /**
+     * PASSWORD STUFF
+     */
+    public String password;
+    public String passwordHasher;
+    public String passwordSalt;
 
 
-    NeoUser user = findNeoUserByIdentityId(basicProfile);
-    if (user == null) {
-      Logger.debug("User is a new user.");
-      user = new NeoUser();
+    /**
+     * Saves the given user
+     *
+     * @param basicProfile
+     * @return
+     */
+    public static NeoUser save(BasicProfile basicProfile) {
+
+
+        NeoUser user = findNeoUserByIdentityId(basicProfile);
+        if (user == null) {
+            Logger.debug("User is a new user.");
+            user = new NeoUser();
+        }
+
+        user.authMethod = basicProfile.authMethod().method();
+
+        user.firstName = basicProfile.firstName().get();
+        user.lastName = basicProfile.lastName().get();
+        user.fullName = basicProfile.fullName().get();
+        user.providerId = basicProfile.providerId();
+        user.userId = basicProfile.userId();
+
+        if (basicProfile.email().isDefined() == true) {
+            user.email = basicProfile.email().get();
+        }
+
+        if (basicProfile.avatarUrl().isDefined() == true) {
+            user.avatarUrl = basicProfile.avatarUrl().get();
+        }
+
+        /**
+         * Password login user
+         */
+        if (basicProfile.passwordInfo().isDefined() && user.id == null) {
+            final PasswordInfo passwordInfo = basicProfile.passwordInfo().get();
+            user.password = passwordInfo.password();
+            user.passwordHasher = passwordInfo.hasher();
+            if (passwordInfo.salt().isDefined() == true) {
+                user.passwordSalt = passwordInfo.salt().get();
+            }
+        }
+
+        final NeoUser savedUser = Neo4JServiceProvider.get().neoUserRepository.save(user);
+
+        return savedUser;
     }
 
-    user.authMethod = basicProfile.authMethod().method();
-
-    user.firstName = basicProfile.firstName().get();
-    user.lastName = basicProfile.lastName().get();
-    user.fullName = basicProfile.fullName().get();
-    user.identProviderId = basicProfile.providerId();
-    user.identUserId = basicProfile.userId();
-
-    if (basicProfile.email().isDefined() == true) {
-      user.email = basicProfile.email().get();
-    }
-
-    if (basicProfile.avatarUrl().isDefined() == true) {
-      user.avatarUrl = basicProfile.avatarUrl().get();
+    public static NeoUser setUserIsAdmin(final NeoUser user, final boolean isAdmin) {
+        user.admin = isAdmin;
+        return Neo4JServiceProvider.get().neoUserRepository.save(user);
     }
 
     /**
-     * Password login user
+     * Finds a NeoUser by the email and the id
+     *
+     * @param email
+     * @param providerId
+     * @return
      */
-    if (basicProfile.passwordInfo().isDefined() && user.id == null) {
-      final PasswordInfo passwordInfo = basicProfile.passwordInfo().get();
-      user.password = passwordInfo.password();
-      user.passwordHasher = passwordInfo.hasher();
-      if (passwordInfo.salt().isDefined() == true) {
-        user.passwordSalt = passwordInfo.salt().get();
-      }
+    public static Option<UserProfile> findByEmailAndProvider(final String email, final String providerId) {
+        final UserProfile byEmailAndProvider = Neo4JServiceProvider.get().neoUserRepository.findByEmailAndProvider(email, providerId);
+        return Option.apply(byEmailAndProvider);
     }
 
-    final NeoUser savedUser = Neo4JServiceProvider.get().neoUserRepository.save(user);
+    /**
+     * Finds the user by the given id
+     *
+     * @param userProfile
+     * @return
+     */
+    public static Option<UserProfile> findByIdentityId(UserProfile userProfile) {
+        final UserProfile byIdentity = findNeoUserByIdentityId(userProfile);
+        return Option.apply(byIdentity);
+    }
 
-    return savedUser;
-  }
+    /**
+     * Finds the user by the identity
+     *
+     * @param userProfile
+     * @return
+     */
+    public static NeoUser findNeoUserByIdentityId(UserProfile userProfile) {
+        return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userProfile.userId(), userProfile.providerId());
+    }
 
-  public static NeoUser setUserIsAdmin(final NeoUser user, final boolean isAdmin) {
-    user.admin = isAdmin;
-    return Neo4JServiceProvider.get().neoUserRepository.save(user);
-  }
-
-  /**
-   * Finds a NeoUser by the email and the id
-   *
-   * @param email
-   * @param providerId
-   * @return
-   */
-  public static Option<UserProfile> findByEmailAndProvider(final String email, final String providerId) {
-    final UserProfile byEmailAndProvider = Neo4JServiceProvider.get().neoUserRepository.findByEmailAndProvider(email, providerId);
-    return Option.apply(byEmailAndProvider);
-  }
-
-  /**
-   * Finds the user by the given id
-   *
-   * @param userProfile
-   * @return
-   */
-  public static Option<UserProfile> findByIdentityId(UserProfile userProfile) {
-    final UserProfile byIdentity = findNeoUserByIdentityId(userProfile);
-    return Option.apply(byIdentity);
-  }
-
-  /**
-   * Finds the user by the identity
-   *
-   * @param userProfile
-   * @return
-   */
-  public static NeoUser findNeoUserByIdentityId(UserProfile userProfile) {
-    return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userProfile.userId(), userProfile.providerId());
-  }
-
-    public static  NeoUser findUserByIdAndProviderId(final String userId, final String providerId) {
+    public static NeoUser findUserByIdAndProviderId(final String userId, final String providerId) {
         return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userId, providerId);
     }
 
 
-
-
-  @Override
-  public Option<String> firstName() {
-    return Option.apply(firstName);
-  }
-
-  @Override
-  public Option<String> lastName() {
-    return Option.apply(lastName);
-  }
-
-  @Override
-  public Option<String> fullName() {
-    return Option.apply(fullName);
-  }
-
-  @Override
-  public Option<String> email() {
-    return Option.apply(email);
-  }
-
-  @Override
-  public Option<String> avatarUrl() {
-    return Option.apply(avatarUrl);
-  }
-
-  @Override
-  public AuthenticationMethod authMethod() {
-    return new AuthenticationMethod(authMethod);
-  }
-
-  @Override
-  public Option<OAuth1Info> oAuth1Info() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public Option<OAuth2Info> oAuth2Info() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public Option<PasswordInfo> passwordInfo() {
-    if (StringUtils.isEmpty(password) == false && StringUtils.isEmpty(passwordHasher) == false) {
-      final PasswordInfo passwordInfo = new PasswordInfo(passwordHasher, password, Option.apply(passwordSalt));
-      return Option.apply(passwordInfo);
+    @Override
+    public Option<String> firstName() {
+        return Option.apply(firstName);
     }
 
-    return Option.empty();
-  }
+    @Override
+    public Option<String> lastName() {
+        return Option.apply(lastName);
+    }
+
+    @Override
+    public Option<String> fullName() {
+        return Option.apply(fullName);
+    }
+
+    @Override
+    public Option<String> email() {
+        return Option.apply(email);
+    }
+
+    @Override
+    public Option<String> avatarUrl() {
+        return Option.apply(avatarUrl);
+    }
+
+    @Override
+    public AuthenticationMethod authMethod() {
+        return new AuthenticationMethod(authMethod);
+    }
+
+    @Override
+    public Option<OAuth1Info> oAuth1Info() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Option<OAuth2Info> oAuth2Info() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Option<PasswordInfo> passwordInfo() {
+        if (StringUtils.isEmpty(password) == false && StringUtils.isEmpty(passwordHasher) == false) {
+            final PasswordInfo passwordInfo = new PasswordInfo(passwordHasher, password, Option.apply(passwordSalt));
+            return Option.apply(passwordInfo);
+        }
+
+        return Option.empty();
+    }
 
     @Override
     public String providerId() {
-        return null;
+        return providerId   ;
     }
 
     @Override
     public String userId() {
-        return null;
+        return userId;
     }
     /* EO SECURE SOCIAL STUFF */
 }

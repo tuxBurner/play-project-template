@@ -48,12 +48,5 @@ object BaseController {
   def currentUser(implicit request: RequestHeader,env: securesocial.core.RuntimeEnvironment[neo4j.models.users.NeoUser]): Option[neo4j.models.users.NeoUser] = {
     val mu = SecureSocial.currentUser[neo4j.models.users.NeoUser];
     Await.result(mu,Duration(10,TimeUnit.SECONDS))
-
-    //SecureSocial.currentUser[NeoUser].onComplete(f => f.get);
   }
-  /*def currentUser(implicit request: RequestHeader, env:securesocial.core.RuntimeEnvironment[_]): Option[NeoUser] = {
-    SecureSocial.currentUser[NeoUser].map { maybeUser =>
-      maybeUser;
-    }
-  } */
 }

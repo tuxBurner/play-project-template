@@ -15,12 +15,12 @@ public interface NeoUserRepository extends GraphRepository<NeoUser> {
   /**
    * Find user by his identity and providerId
    *
-   * @param identUserId
-   * @param identProviderId
+   * @param userId
+   * @param providerId
    * @return
    */
-  @Query("MATCH (user:" + TypeAliasNames.USER + ") WHERE user.identUserId = {0} AND user.identProviderId = {1} RETURN user")
-  public NeoUser findByIdentity(final String identUserId, final String identProviderId);
+  @Query("MATCH (user:" + TypeAliasNames.USER + ") WHERE user.userId = {0} AND user.providerId = {1} RETURN user")
+  public NeoUser findByIdentity(final String userId, final String providerId);
 
   /**
    * Find user by his identity and email
@@ -29,6 +29,6 @@ public interface NeoUserRepository extends GraphRepository<NeoUser> {
    * @param providerId
    * @return
    */
-  @Query("MATCH (user:" + TypeAliasNames.USER + ") WHERE user.email = {0} AND user.identProviderId = {1} RETURN user")
+  @Query("MATCH (user:" + TypeAliasNames.USER + ") WHERE user.email = {0} AND user.providerId = {1} RETURN user")
   public NeoUser findByEmailAndProvider(final String email, final String providerId);
 }
