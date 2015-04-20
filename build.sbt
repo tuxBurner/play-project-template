@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "com.github.tuxBurner" %% "play-twbs3" % "1.0",
   "com.github.tuxBurner" %% "play-neo4jplugin" % "1.4.2",
-  "com.github.tuxBurner" %% "play-jsannotations" % "1.2.1",
+  "com.github.tuxBurner" %% "play-jsannotations" % "1.2.2",
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.webjars" % "jquery" % "1.11.1",
   "org.webjars" % "font-awesome" % "4.2.0",
