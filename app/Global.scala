@@ -7,9 +7,9 @@ import services.auth.configuration.SecureSocialConfigEnv
 /**
  * Created by tuxburner on 10.10.14.
  */
-object Global extends play.api.GlobalSettings  {
+object Global extends play.api.GlobalSettings {
 
- 
+
   /**
    * An implementation that checks if the controller expects a RuntimeEnvironment and
    * passes the instance to it if required.

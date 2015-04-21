@@ -9,6 +9,7 @@ scalaVersion := "2.10.4"
 libraryDependencies ++= Seq(
   cache,
   ws,
+  filters,
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "com.github.tuxBurner" %% "play-twbs3" % "1.0",
   "com.github.tuxBurner" %% "play-neo4jplugin" % "1.4.2",

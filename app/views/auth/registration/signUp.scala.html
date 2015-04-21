@@ -1,6 +1,7 @@
 @(signUpForm:Form[securesocial.controllers.RegistrationInfo], mailToken: String)(implicit request: RequestHeader, lang: Lang, env: securesocial.core.RuntimeEnvironment[neo4j.models.users.NeoUser])
+@import views.html.helper.CSRF
 @import securesocial.core.providers.UsernamePasswordProvider
-@import securesocial.core.IdentityProvider
+
 
 
 
@@ -9,8 +10,9 @@
   <div class="jumbotron indexJumpotron">
     <h1>@Messages("securesocial.signup.title")</h1>
     <div class="container">
-      <form action="@securesocial.controllers.routes.Registration.handleSignUp(mailToken).absoluteURL(IdentityProvider.sslEnabled)" class="form" autocomplete= "off" method="POST">
+      <form action="@env.routes.handleSignUpUrl(mailToken)" class="form" autocomplete= "off" method="POST">
 
+        @CSRF.formField
 
 
         <div class="row">

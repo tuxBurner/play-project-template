@@ -1,14 +1,14 @@
 @(startForm:Form[String])(implicit request: RequestHeader, lang: Lang, env: securesocial.core.RuntimeEnvironment[neo4j.models.users.NeoUser])
-
-
+@import views.html.helper.CSRF
 
 
 @main(Messages("securesocial.signup.title")) {
-
   <div class="jumbotron indexJumpotron">
     <h1>@Messages("securesocial.signup.title")</h1>
     <div class="container">
-      <form action="@env.routes.signUpUrl" class="form-inline" autocomplete="off" method="post">
+      <form action="@env.routes.handleStartSignUpUrl" class="form-inline" autocomplete="off" method="post">
+
+        @CSRF.formField
 
         @twbs.formhelper.html.inputText(
           startForm("email"),
