@@ -2,7 +2,7 @@ import java.lang.reflect.Constructor
 
 import neo4j.models.users.NeoUser
 import securesocial.core.RuntimeEnvironment
-import services.auth.configuration.SecureSocialConfigEnv
+import services.securesocial.configuration.SecureSocialConfigEnv
 
 /**
  * Created by tuxburner on 10.10.14.

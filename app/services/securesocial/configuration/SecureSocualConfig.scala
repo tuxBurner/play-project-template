@@ -1,8 +1,8 @@
-package services.auth.configuration
+package services.securesocial.configuration
 
 import neo4j.models.users.NeoUser
 import securesocial.core.RuntimeEnvironment
-import services.auth.Neo4JSecureSocialService
+import services.securesocial.Neo4JSecureSocialService
 
 /**
  * The runtime environment for this sample app.

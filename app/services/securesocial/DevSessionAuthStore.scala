@@ -1,4 +1,4 @@
-package services.auth
+package services.securesocial
 
 import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.Date

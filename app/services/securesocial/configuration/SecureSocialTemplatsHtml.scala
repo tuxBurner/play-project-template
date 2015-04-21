@@ -1,4 +1,4 @@
-package services.auth.configuration
+package services.securesocial.configuration
 
 import play.api.data.Form
 import play.api.i18n.Lang

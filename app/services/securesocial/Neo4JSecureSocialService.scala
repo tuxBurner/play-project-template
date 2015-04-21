@@ -1,4 +1,4 @@
-package services.auth
+package services.securesocial
 
 import neo4j.models.users.{SecureUser, NeoToken, NeoUser}
 import org.joda.time.DateTime
