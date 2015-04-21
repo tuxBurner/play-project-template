@@ -31,7 +31,7 @@ class Neo4JSecureSocialService extends UserService[NeoUser] {
   }
 
   override  def save(profile: BasicProfile, mode: SaveMode): Future[NeoUser] = {
-    Future.successful(NeoUser.save(profile));
+    Future.successful(NeoUser.save(profile,mode));
   }
 
 
@@ -54,11 +54,14 @@ class Neo4JSecureSocialService extends UserService[NeoUser] {
   override  def link(current: NeoUser, to: BasicProfile): Future[NeoUser] = ???
 
   override def passwordInfoFor(user: NeoUser): Future[Option[PasswordInfo]] = {
-    Logger.error("IMPLEMENT MEE !!!!");
+    Logger.error("IMPLEMENT MEE !!!! passwordInfoFor");
     Future.successful(Option.empty);
   }
 
-  override def updatePasswordInfo(user: NeoUser, info: PasswordInfo): Future[Option[BasicProfile]] = ???
+  override def updatePasswordInfo(user: NeoUser, info: PasswordInfo): Future[Option[BasicProfile]] = {
+    Logger.error("IMPLEMENT MEE !!!! updatePasswordInfo");
+    Future.successful(Option.empty);
+  }
 
   /**
    * Transforms the given NeoUser to a BasicProfile

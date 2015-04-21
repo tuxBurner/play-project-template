@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity;
 import play.Logger;
 import scala.Option;
 import securesocial.core.*;
+import securesocial.core.services.SaveMode;
 
 @NodeEntity
 @TypeAlias(value = TypeAliasNames.USER)
@@ -49,7 +50,7 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
      * @param basicProfile
      * @return
      */
-    public static NeoUser save(BasicProfile basicProfile) {
+    public static NeoUser save(BasicProfile basicProfile, SaveMode mode) {
 
 
         NeoUser user = findNeoUserByIdentityId(basicProfile);
@@ -74,10 +75,8 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
             user.avatarUrl = basicProfile.avatarUrl().get();
         }
 
-        /**
-         * Password login user
-         */
-        if (basicProfile.passwordInfo().isDefined() && user.id == null) {
+        // set the password at the user when defined
+        if (basicProfile.passwordInfo().isDefined() && (SaveMode.PasswordChange().equals(mode)  || SaveMode.SignUp().equals(mode))) {
             final PasswordInfo passwordInfo = basicProfile.passwordInfo().get();
             user.password = passwordInfo.password();
             user.passwordHasher = passwordInfo.hasher();
