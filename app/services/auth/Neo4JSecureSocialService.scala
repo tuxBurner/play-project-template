@@ -53,7 +53,7 @@ class Neo4JSecureSocialService extends UserService[NeoUser] {
 
   override  def link(current: NeoUser, to: BasicProfile): Future[NeoUser] = {
     Logger.error("IMPLEMENT MEE !!!! link");
-    Future.successful(Option.empty);
+    Future.successful(null);
   }
 
   override def passwordInfoFor(user: NeoUser): Future[Option[PasswordInfo]] = {

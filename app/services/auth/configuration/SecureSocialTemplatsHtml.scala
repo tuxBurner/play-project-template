@@ -16,7 +16,7 @@ class SecureSocialTemplatsHtml(env: RuntimeEnvironment[neo4j.models.users.NeoUse
   implicit val implicitEnv = env
 
   override def getLoginPage(form: Form[(String, String)], msg: Option[String])(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.auth.login(form, msg)(request, lang, env)
+    views.html.securesocialtpl.login(form, msg)(request, lang, env)
   }
 
   override def getPasswordChangePage(form: Form[ChangeInfo])(implicit request: RequestHeader, lang: Lang): Html = {
@@ -28,18 +28,18 @@ class SecureSocialTemplatsHtml(env: RuntimeEnvironment[neo4j.models.users.NeoUse
   }
 
   override def getStartSignUpPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.auth.registration.startSignUp(form)
+    views.html.securesocialtpl.signup.startSignUp(form)
   }
 
   override def getSignUpPage(form: Form[RegistrationInfo], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.auth.registration.signUp(form, token)(request, lang, env)
+    views.html.securesocialtpl.signup.signUp(form, token)(request, lang, env)
   }
 
   override def getResetPasswordPage(form: Form[(String, String)], token: String)(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.auth.registration.resetPasswordPage(form, token)(request, lang, env)
+    views.html.securesocialtpl.resetpwd.resetPasswordPage(form, token)(request, lang, env)
   }
 
   override def getStartResetPasswordPage(form: Form[String])(implicit request: RequestHeader, lang: Lang): Html = {
-    views.html.auth.registration.startResetPassword(form)(request, lang, env)
+    views.html.securesocialtpl.resetpwd.startResetPassword(form)(request, lang, env)
   }
 }

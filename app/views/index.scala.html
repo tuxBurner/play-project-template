@@ -15,7 +15,7 @@
                 @defining(env.providers.values.filter(_.id != UsernamePasswordProvider.UsernamePassword)) { externalProviders =>
                     @if(externalProviders.size > 0) {
                         @for(p <- externalProviders) {
-                            @views.html.auth.provider(p.id)
+                            @views.html.securesocialtpl.provider(p.id)
                         }
                     }
                 }
@@ -48,7 +48,7 @@
             } else {
                 @defining(BaseController.currentUser.get) { user =>
                     <h2>Welcome back</h2>
-                    <h3>@views.html.auth.displayUserAvatar(user, helpers.ImageSize.USER_AVATAR_BIG) @user.fullName()</h3>
+                    <h3>@views.html.securesocialtpl.displayUserAvatar(user, helpers.ImageSize.USER_AVATAR_BIG) @user.fullName()</h3>
                 }
             }
         </div>
