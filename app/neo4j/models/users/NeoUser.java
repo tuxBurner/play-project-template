@@ -126,7 +126,7 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
      * @return
      */
     public static NeoUser findNeoUserByIdentityId(UserProfile userProfile) {
-        return Neo4JServiceProvider.get().neoUserRepository.findByIdentity(userProfile.userId(), userProfile.providerId());
+        return findUserByIdAndProviderId(userProfile.userId(), userProfile.providerId());
     }
 
     public static NeoUser findUserByIdAndProviderId(final String userId, final String providerId) {
