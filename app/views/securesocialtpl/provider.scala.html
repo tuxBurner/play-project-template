@@ -6,60 +6,63 @@
 @import play.api.Logger
 
 
-    @env.providers.get(providerId).map { provider =>
-    @if( provider.authMethod == OAuth1 || provider.authMethod == OAuth2 ) {
+@env.providers.get(providerId).map { provider =>
+  @if(provider.authMethod == OAuth1 || provider.authMethod == OAuth2) {
 
-
-        @defining(if(provider.id == "google") { "google-plus" } else { provider.id }) { providerIcon =>
-          <a href="@env.routes.authenticationUrl(provider.id)" class="socialBig btn btn-info">
-            <i class="fa icon-large fa-@providerIcon"></i>
-          </a>
-        }
-
+    @* google plus has a differentt name in the  awesome font package *@
+    @defining(if(provider.id == "google") {
+      "google-plus"
+    } else {
+      provider.id
+    }) { providerIcon =>
+      <a href="@env.routes.authenticationUrl(provider.id)" class="socialBig btn btn-info">
+        <i class="fa icon-large fa-@providerIcon"></i>
+      </a>
     }
 
-    @if( provider.authMethod == UserPassword) {
-        <form action = "@env.routes.authenticationUrl("userpass")" class="form-inline" autocomplete="off" method="POST">
-                @if( UsernamePasswordProvider.withUserNameSupport ) {
-                    @twbs.formhelper.html.inputText(
-                        loginForm.get("username"),
-                        'placeholder -> Messages("securesocial.signup.username"),
-                        '_hideLabel -> true,
-                        '_hideInfo -> true
-                    )
-                } else {
-                    @twbs.formhelper.html.inputText(
-                        loginForm.get("username"),
-                        'placeholder -> Messages("securesocial.signup.email1"),
-                        '_hideLabel -> true,
-                        '_hideInfo -> true
-                    )
-                }
+  }
 
-                @twbs.formhelper.html.inputPassword(
-                    loginForm.get("password"),
-                    'placeholder -> Messages("securesocial.signup.password1"),
-                    '_hideLabel -> true,
-                    '_hideInfo -> true
-                )
+  @if(provider.authMethod == UserPassword) {
+    <form action = "@env.routes.authenticationUrl("userpass")" class="form-inline" autocomplete="off" method="POST">
+      @if(UsernamePasswordProvider.withUserNameSupport) {
+        @twbs.formhelper.html.inputText(
+          loginForm.get("username"),
+          'placeholder -> Messages("securesocial.signup.username"),
+          '_hideLabel -> true,
+          '_hideInfo -> true
+        )
+      } else {
+        @twbs.formhelper.html.inputText(
+          loginForm.get("username"),
+          'placeholder -> Messages("securesocial.signup.email1"),
+          '_hideLabel -> true,
+          '_hideInfo -> true)
+      }
 
-
-                <button type="submit" class="btn btn-primary">@Messages("securesocial.login.title")</button>
+      @twbs.formhelper.html.inputPassword(
+        loginForm.get("password"),
+        'placeholder -> Messages("securesocial.signup.password1"),
+        '_hideLabel -> true,
+        '_hideInfo -> true
+      )
 
 
-                <div class="clearfix">
-                    <a href="@env.routes.startResetPasswordUrl"><p>@Messages("securesocial.login.forgotPassword") </a></p>
-                </div>
-                <div class="clearfix">
-                    <p>@Messages("securesocial.login.signUp") <a href="@env.routes.startSignUpUrl">@Messages("securesocial.login.here")</a></p>
-                </div>
+      <button type="submit" class="btn btn-primary">@Messages("securesocial.login.title")</button>
 
-        </form>
-    }
+
+      <div class="clearfix">
+        <a href="@env.routes.startResetPasswordUrl"><p>@Messages("securesocial.login.forgotPassword") </a></p>
+      </div>
+      <div class="clearfix">
+        <p>@Messages("securesocial.login.signUp") <a href="@env.routes.startSignUpUrl">@Messages("securesocial.login.here")</a></p>
+      </div>
+
+    </form>
+  }
 }.getOrElse {
-    @*****************************************
-    * Todo: throw a runtime exception? this might need improvement
-    *****************************************@
-    @Logger.error("[securesocial] unknown provider '%s'. Can't render it.".format(providerId))
-    { throw new RuntimeException("Unknown provider '%s') }
+  @*****************************************
+  * Todo: throw a runtime exception? this might need improvement
+  *****************************************@
+  @Logger.error("[securesocial] unknown provider '%s'. Can't render it.".format(providerId))
+  { throw new RuntimeException("Unknown provider '%s') }
 }
