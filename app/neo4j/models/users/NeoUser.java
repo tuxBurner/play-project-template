@@ -51,8 +51,6 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
      * @return
      */
     public static NeoUser save(BasicProfile basicProfile, SaveMode mode) {
-
-
         NeoUser user = findNeoUserByIdentityId(basicProfile);
         if (user == null) {
             Logger.debug("User is a new user.");
@@ -76,7 +74,7 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
         }
 
         // set the password at the user when defined
-        if (basicProfile.passwordInfo().isDefined() && (SaveMode.PasswordChange().equals(mode)  || SaveMode.SignUp().equals(mode))) {
+        if (basicProfile.passwordInfo().isDefined() && (SaveMode.PasswordChange().equals(mode) || SaveMode.SignUp().equals(mode))) {
             final PasswordInfo passwordInfo = basicProfile.passwordInfo().get();
             user.password = passwordInfo.password();
             user.passwordHasher = passwordInfo.hasher();
@@ -185,7 +183,7 @@ public class NeoUser extends AbstractNeoNode implements GenericProfile {
 
     @Override
     public String providerId() {
-        return providerId   ;
+        return providerId;
     }
 
     @Override

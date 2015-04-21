@@ -51,7 +51,10 @@ class Neo4JSecureSocialService extends UserService[NeoUser] {
     NeoToken.deleteExpiredTokens();
   }
 
-  override  def link(current: NeoUser, to: BasicProfile): Future[NeoUser] = ???
+  override  def link(current: NeoUser, to: BasicProfile): Future[NeoUser] = {
+    Logger.error("IMPLEMENT MEE !!!! link");
+    Future.successful(Option.empty);
+  }
 
   override def passwordInfoFor(user: NeoUser): Future[Option[PasswordInfo]] = {
     Logger.error("IMPLEMENT MEE !!!! passwordInfoFor");
